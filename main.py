@@ -243,9 +243,7 @@ while True:
             target_index = int(attack) - 1
             attacked_country = countries[target_index]
 
-            # Compare the powers and determine the outcome
             if country_power > attacked_country['power']:
-                # Winner: You
                 print(f"\nYou won the battle against {attacked_country['name']}!")
                 country_power += 2
                 country_economy += 2
@@ -262,7 +260,6 @@ while True:
                 print(f"Power: {attacked_country['power']}, Economy: {attacked_country['economy']}, Stability: {attacked_country['stability']}")
             
             elif country_power < attacked_country['power']:
-                # Loser: You
                 print(f"\nYou lost the battle against {attacked_country['name']}!")
                 attacked_country['power'] += 2
                 attacked_country['economy'] += 2
@@ -279,7 +276,6 @@ while True:
                 print(f"Power: {country_power}, Economy: {country_economy}, Stability: {country_stability}")
             
             elif country_power == attacked_country['power']:
-                # Equal power scenario
                 print("\nIt's a draw! Both countries have the same power.")
                 country_power -= 1
                 country_economy -= 1
