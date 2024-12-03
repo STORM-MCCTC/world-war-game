@@ -250,7 +250,7 @@ while True:
     elif user_input == "3":
         print("\nWhat country will you attack?")
         for i, country in enumerate(countries, start=1):
-            print(f"{i}. {country['name']}")
+             print(f"{i}. {country['name']} - Power: {country['power']}, Economy: {country['economy']}, Stability: {country['stability']}")
 
         attack = input("\nEnter the number of the country to attack: ").strip()
 
@@ -260,33 +260,33 @@ while True:
 
             if country_power > attacked_country['power']:
                 print(f"\nYou won the battle against {attacked_country['name']}!")
-                country_power += 2
-                country_economy += 2
+                country_power += 5
+                country_economy += 5
                 country_stability -= 5
 
-                attacked_country['power'] -= 2
-                attacked_country['economy'] -= 2
+                attacked_country['power'] -= 5
+                attacked_country['economy'] -= 5
                 attacked_country['stability'] -= 3
 
             elif country_power < attacked_country['power']:
                 print(f"\nYou lost the battle against {attacked_country['name']}!")
-                attacked_country['power'] += 2
-                attacked_country['economy'] += 2
+                attacked_country['power'] += 5
+                attacked_country['economy'] += 5
                 attacked_country['stability'] -= 1
 
-                country_power -= 2
-                country_economy -= 2
+                country_power -= 5
+                country_economy -= 5
                 country_stability -= 5
 
             elif country_power == attacked_country['power']:
                 print("\nIt's a draw! Both countries have the same power.")
-                country_power -= 1
-                country_economy -= 1
-                country_stability -= 1
+                country_power -= 0
+                country_economy -= 0
+                country_stability -= 0
 
-                attacked_country['power'] -= 1
-                attacked_country['economy'] -= 1
-                attacked_country['stability'] -= 1
+                attacked_country['power'] -= 0
+                attacked_country['economy'] -= 0
+                attacked_country['stability'] -= 0
 
             else:
                 print("\nInvalid input. Please enter a valid country number.")
