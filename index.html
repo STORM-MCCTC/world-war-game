@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World War III Strategy Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        #game-interface {
+            display: none;
+        }
+        .stats {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>World War III | Strategy Game</h1>
+
+    <div id="intro">
+        <p>Welcome to the game!</p>
+        <label for="country-name">Name Your Country:</label>
+        <input type="text" id="country-name" />
+        <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game-interface">
+        <div class="stats">
+            <h2>Your Country: <span id="country-name-display"></span></h2>
+            <p>Power: <span id="country-power"></span></p>
+            <p>Economy: <span id="country-economy"></span></p>
+            <p>Stability: <span id="country-stability"></span></p>
+        </div>
+
+        <button onclick="showCountryList()">Country List</button>
+        <button onclick="viewCountryStats()">View Your Country</button>
+        <button onclick="goToWar()">Go to War</button>
+        <button onclick="improveStability()">Improve Stability</button>
+        <button onclick="exitGame()">Exit</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        let countryName;
+        let countryPower = 5;
+        let countryEconomy = 5;
+        let countryStability = 100;
+
+        const countries = [{"name": "Afghanistan", "power": 10, "economy": 5, "stability": 4},
+    {"name": "Albania", "power": 8, "economy": 6, "stability": 7},
+    {"name": "Algeria", "power": 15, "economy": 10, "stability": 6},
+    {"name": "Andorra", "power": 2, "economy": 7, "stability": 9},
+    {"name": "Angola", "power": 12, "economy": 7, "stability": 5},
+    {"name": "Antigua and Barbuda", "power": 1, "economy": 5, "stability": 8},
+    {"name": "Argentina", "power": 20, "economy": 15, "stability": 10},
+    {"name": "Armenia", "power": 10, "economy": 6, "stability": 5},
+    {"name": "Australia", "power": 30, "economy": 40, "stability": 35},
+    {"name": "Austria", "power": 15, "economy": 25, "stability": 30},
+    {"name": "Azerbaijan", "power": 12, "economy": 10, "stability": 8},
+    {"name": "Bahamas", "power": 3, "economy": 10, "stability": 12},
+    {"name": "Bahrain", "power": 10, "economy": 15, "stability": 20},
+    {"name": "Bangladesh", "power": 15, "economy": 12, "stability": 10},
+    {"name": "Barbados", "power": 2, "economy": 6, "stability": 10},
+    {"name": "Belarus", "power": 18, "economy": 15, "stability": 12},
+    {"name": "Belgium", "power": 25, "economy": 30, "stability": 35},
+    {"name": "Belize", "power": 2, "economy": 5, "stability": 9},
+    {"name": "Benin", "power": 5, "economy": 4, "stability": 6},
+    {"name": "Bhutan", "power": 3, "economy": 2, "stability": 15},
+    {"name": "Bolivia", "power": 10, "economy": 8, "stability": 7},
+    {"name": "Bosnia and Herzegovina", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Botswana", "power": 6, "economy": 10, "stability": 15},
+    {"name": "Brazil", "power": 40, "economy": 35, "stability": 25},
+    {"name": "Brunei", "power": 8, "economy": 20, "stability": 25},
+    {"name": "Bulgaria", "power": 12, "economy": 10, "stability": 12},
+    {"name": "Burkina Faso", "power": 4, "economy": 3, "stability": 4},
+    {"name": "Burundi", "power": 3, "economy": 2, "stability": 3},
+    {"name": "Cabo Verde", "power": 2, "economy": 3, "stability": 10},
+    {"name": "Cambodia", "power": 10, "economy": 8, "stability": 6},
+    {"name": "Cameroon", "power": 12, "economy": 10, "stability": 7},
+    {"name": "Canada", "power": 45, "economy": 50, "stability": 50},
+    {"name": "Central African Republic", "power": 4, "economy": 2, "stability": 2},
+    {"name": "Chad", "power": 6, "economy": 3, "stability": 3},
+    {"name": "Chile", "power": 20, "economy": 25, "stability": 20},
+    {"name": "China", "power": 100, "economy": 90, "stability": 80},
+    {"name": "Colombia", "power": 20, "economy": 18, "stability": 15},
+    {"name": "Comoros", "power": 2, "economy": 2, "stability": 5},
+    {"name": "Republic of the Congo", "power": 10, "economy": 6, "stability": 5},
+    {"name": "Democratic Republic of the Congo", "power": 20, "economy": 8, "stability": 4},
+    {"name": "Costa Rica", "power": 5, "economy": 12, "stability": 20},
+    {"name": "Croatia", "power": 15, "economy": 18, "stability": 20},
+    {"name": "Cuba", "power": 15, "economy": 10, "stability": 10},
+    {"name": "Cyprus", "power": 8, "economy": 15, "stability": 18},
+    {"name": "Czech Republic", "power": 20, "economy": 25, "stability": 30},
+    {"name": "Denmark", "power": 30, "economy": 40, "stability": 50},
+    {"name": "Djibouti", "power": 6, "economy": 5, "stability": 6},
+    {"name": "Dominica", "power": 1, "economy": 4, "stability": 8},
+    {"name": "Dominican Republic", "power": 12, "economy": 15, "stability": 15},
+    {"name": "Ecuador", "power": 12, "economy": 10, "stability": 8},
+    {"name": "Egypt", "power": 30, "economy": 25, "stability": 20},
+    {"name": "El Salvador", "power": 10, "economy": 8, "stability": 6},
+    {"name": "Equatorial Guinea", "power": 8, "economy": 6, "stability": 4},
+    {"name": "Eritrea", "power": 6, "economy": 3, "stability": 2},
+    {"name": "Estonia", "power": 10, "economy": 15, "stability": 25},
+    {"name": "Eswatini", "power": 3, "economy": 5, "stability": 8},
+    {"name": "Ethiopia", "power": 20, "economy": 12, "stability": 10},
+    {"name": "Fiji", "power": 5, "economy": 6, "stability": 12},
+    {"name": "Finland", "power": 25, "economy": 30, "stability": 50},
+    {"name": "France", "power": 80, "economy": 70, "stability": 75},
+    {"name": "Gabon", "power": 8, "economy": 6, "stability": 7},
+    {"name": "Gambia", "power": 3, "economy": 2, "stability": 5},
+    {"name": "Georgia", "power": 8, "economy": 6, "stability": 7},
+    {"name": "Germany", "power": 90, "economy": 85, "stability": 80},
+    {"name": "Ghana", "power": 10, "economy": 12, "stability": 15},
+    {"name": "Greece", "power": 20, "economy": 18, "stability": 15},
+    {"name": "Grenada", "power": 1, "economy": 5, "stability": 10},
+    {"name": "Guatemala", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Guinea", "power": 6, "economy": 5, "stability": 3},
+    {"name": "Guinea-Bissau", "power": 3, "economy": 2, "stability": 2},
+    {"name": "Guyana", "power": 5, "economy": 8, "stability": 12},
+    {"name": "Haiti", "power": 5, "economy": 3, "stability": 2},
+    {"name": "Honduras", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Hungary", "power": 20, "economy": 18, "stability": 20},
+    {"name": "Iceland", "power": 8, "economy": 10, "stability": 30},
+    {"name": "India", "power": 90, "economy": 80, "stability": 70},
+    {"name": "Indonesia", "power": 40, "economy": 35, "stability": 30},
+    {"name": "Iran", "power": 50, "economy": 30, "stability": 20},
+    {"name": "Iraq", "power": 20, "economy": 15, "stability": 8},
+    {"name": "Ireland", "power": 15, "economy": 20, "stability": 35},
+    {"name": "Israel", "power": 50, "economy": 40, "stability": 30},
+    {"name": "Italy", "power": 60, "economy": 55, "stability": 50},
+    {"name": "Jamaica", "power": 8, "economy": 10, "stability": 12},
+    {"name": "Japan", "power": 90, "economy": 95, "stability": 85},
+    {"name": "Jordan", "power": 15, "economy": 12, "stability": 18},
+    {"name": "Kazakhstan", "power": 30, "economy": 25, "stability": 20},
+    {"name": "Kenya", "power": 20, "economy": 18, "stability": 15},
+    {"name": "Kiribati", "power": 1, "economy": 2, "stability": 10},
+    {"name": "Kuwait", "power": 15, "economy": 40, "stability": 35},
+    {"name": "Kyrgyzstan", "power": 8, "economy": 5, "stability": 7},
+    {"name": "Laos", "power": 6, "economy": 5, "stability": 8},
+    {"name": "Latvia", "power": 10, "economy": 15, "stability": 20},
+    {"name": "Lebanon", "power": 10, "economy": 8, "stability": 5},
+    {"name": "Lesotho", "power": 3, "economy": 3, "stability": 6},
+    {"name": "Liberia", "power": 4, "economy": 3, "stability": 3},
+    {"name": "Libya", "power": 20, "economy": 12, "stability": 5},
+    {"name": "Liechtenstein", "power": 2, "economy": 10, "stability": 30},
+    {"name": "Lithuania", "power": 15, "economy": 18, "stability": 25},
+    {"name": "Luxembourg", "power": 5, "economy": 25, "stability": 35},
+    {"name": "Madagascar", "power": 8, "economy": 5, "stability": 6},
+    {"name": "Malawi", "power": 5, "economy": 3, "stability": 6},
+    {"name": "Malaysia", "power": 30, "economy": 25, "stability": 20},
+    {"name": "Maldives", "power": 2, "economy": 8, "stability": 12},
+    {"name": "Mali", "power": 8, "economy": 5, "stability": 3},
+    {"name": "Malta", "power": 5, "economy": 10, "stability": 25},
+    {"name": "Marshall Islands", "power": 1, "economy": 3, "stability": 10},
+    {"name": "Mauritania", "power": 6, "economy": 4, "stability": 6},
+    {"name": "Mauritius", "power": 4, "economy": 10, "stability": 20},
+    {"name": "Mexico", "power": 40, "economy": 35, "stability": 25},
+    {"name": "Micronesia", "power": 1, "economy": 2, "stability": 8},
+    {"name": "Moldova", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Monaco", "power": 1, "economy": 20, "stability": 30},
+    {"name": "Mongolia", "power": 8, "economy": 6, "stability": 8},
+    {"name": "Montenegro", "power": 5, "economy": 5, "stability": 10},
+    {"name": "Morocco", "power": 20, "economy": 18, "stability": 20},
+    {"name": "Mozambique", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Myanmar", "power": 20, "economy": 12, "stability": 5},
+    {"name": "Namibia", "power": 5, "economy": 10, "stability": 15},
+    {"name": "Nauru", "power": 1, "economy": 2, "stability": 8},
+    {"name": "Nepal", "power": 10, "economy": 5, "stability": 12},
+    {"name": "Netherlands", "power": 40, "economy": 50, "stability": 60},
+    {"name": "New Zealand", "power": 25, "economy": 30, "stability": 40},
+    {"name": "Nicaragua", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Niger", "power": 8, "economy": 5, "stability": 3},
+    {"name": "Nigeria", "power": 30, "economy": 20, "stability": 10},
+    {"name": "North Korea", "power": 50, "economy": 10, "stability": 15},
+    {"name": "North Macedonia", "power": 10, "economy": 8, "stability": 12},
+    {"name": "Norway", "power": 30, "economy": 40, "stability": 50},
+    {"name": "Oman", "power": 15, "economy": 25, "stability": 30},
+    {"name": "Pakistan", "power": 40, "economy": 30, "stability": 10},
+    {"name": "Palau", "power": 1, "economy": 2, "stability": 10},
+    {"name": "Palestine", "power": 5, "economy": 3, "stability": 2},
+    {"name": "Panama", "power": 10, "economy": 15, "stability": 20},
+    {"name": "Papua New Guinea", "power": 8, "economy": 6, "stability": 5},
+    {"name": "Paraguay", "power": 10, "economy": 8, "stability": 10},
+    {"name": "Peru", "power": 20, "economy": 18, "stability": 15},
+    {"name": "Philippines", "power": 30, "economy": 25, "stability": 20},
+    {"name": "Poland", "power": 40, "economy": 35, "stability": 40},
+    {"name": "Portugal", "power": 25, "economy": 30, "stability": 40},
+    {"name": "Qatar", "power": 20, "economy": 50, "stability": 45},
+    {"name": "Romania", "power": 20, "economy": 18, "stability": 20},
+    {"name": "Russia", "power": 90, "economy": 60, "stability": 40},
+    {"name": "Rwanda", "power": 8, "economy": 12, "stability": 15},
+    {"name": "Saint Kitts and Nevis", "power": 1, "economy": 4, "stability": 10},
+    {"name": "Saint Lucia", "power": 1, "economy": 5, "stability": 10},
+    {"name": "Saint Vincent and the Grenadines", "power": 1, "economy": 4, "stability": 10},
+    {"name": "Samoa", "power": 2, "economy": 3, "stability": 12},
+    {"name": "San Marino", "power": 1, "economy": 8, "stability": 30},
+    {"name": "Sao Tome and Principe", "power": 1, "economy": 2, "stability": 8},
+    {"name": "Saudi Arabia", "power": 70, "economy": 80, "stability": 60},
+    {"name": "Senegal", "power": 10, "economy": 12, "stability": 15},
+    {"name": "Serbia", "power": 15, "economy": 12, "stability": 15},
+    {"name": "Seychelles", "power": 2, "economy": 6, "stability": 20},
+    {"name": "Sierra Leone", "power": 4, "economy": 3, "stability": 3},
+    {"name": "Singapore", "power": 25, "economy": 60, "stability": 70},
+    {"name": "Slovakia", "power": 15, "economy": 20, "stability": 25},
+    {"name": "Slovenia", "power": 10, "economy": 15, "stability": 25},
+    {"name": "Solomon Islands", "power": 2, "economy": 3, "stability": 8},
+    {"name": "Somalia", "power": 6, "economy": 3, "stability": 1},
+    {"name": "South Africa", "power": 50, "economy": 40, "stability": 30},
+    {"name": "South Korea", "power": 70, "economy": 80, "stability": 70},
+    {"name": "South Sudan", "power": 5, "economy": 2, "stability": 1},
+    {"name": "Spain", "power": 60, "economy": 70, "stability": 60},
+    {"name": "Sri Lanka", "power": 15, "economy": 12, "stability": 10},
+    {"name": "Sudan", "power": 15, "economy": 10, "stability": 4},
+    {"name": "Suriname", "power": 5, "economy": 4, "stability": 8},
+    {"name": "Sweden", "power": 50, "economy": 60, "stability": 70},
+    {"name": "Switzerland", "power": 40, "economy": 60, "stability": 80},
+    {"name": "Syria", "power": 15, "economy": 5, "stability": 2},
+    {"name": "Tajikistan", "power": 8, "economy": 5, "stability": 7},
+    {"name": "Tanzania", "power": 15, "economy": 10, "stability": 12},
+    {"name": "Thailand", "power": 30, "economy": 40, "stability": 25},
+    {"name": "Timor-Leste", "power": 3, "economy": 2, "stability": 10},
+    {"name": "Togo", "power": 5, "economy": 3, "stability": 6},
+    {"name": "Tonga", "power": 1, "economy": 3, "stability": 10},
+    {"name": "Trinidad and Tobago", "power": 8, "economy": 12, "stability": 20},
+    {"name": "Tunisia", "power": 12, "economy": 15, "stability": 12},
+    {"name": "Turkey", "power": 50, "economy": 50, "stability": 30},
+    {"name": "Turkmenistan", "power": 15, "economy": 10, "stability": 10},
+    {"name": "Tuvalu", "power": 1, "economy": 1, "stability": 10},
+    {"name": "Uganda", "power": 15, "economy": 10, "stability": 10},
+    {"name": "Ukraine", "power": 30, "economy": 20, "stability": 15},
+    {"name": "United Arab Emirates", "power": 40, "economy": 70, "stability": 50},
+    {"name": "United Kingdom", "power": 80, "economy": 85, "stability": 70},
+    {"name": "United States", "power": 100, "economy": 100, "stability": 90},
+    {"name": "Uruguay", "power": 10, "economy": 15, "stability": 20},
+    {"name": "Uzbekistan", "power": 20, "economy": 10, "stability": 15},
+    {"name": "Vanuatu", "power": 2, "economy": 3, "stability": 10},
+    {"name": "Vatican City", "power": 1, "economy": 2, "stability": 30},
+    {"name": "Venezuela", "power": 20, "economy": 5, "stability": 3},
+    {"name": "Vietnam", "power": 30, "economy": 25, "stability": 20},
+    {"name": "Yemen", "power": 10, "economy": 4, "stability": 2},
+    {"name": "Zambia", "power": 10, "economy": 6, "stability": 8},
+    {"name": "Zimbabwe", "power": 10, "economy": 4, "stability": 3}];
+
+    function startGame() {
+        const inputName = document.getElementById("country-name").value.trim();
+        if (!inputName) {
+            alert("Please enter a valid country name.");
+            return;
+        }
+        countryName = inputName;
+        document.getElementById("country-name-display").textContent = countryName;
+        document.getElementById("country-power").textContent = countryPower;
+        document.getElementById("country-economy").textContent = countryEconomy;
+        document.getElementById("country-stability").textContent = countryStability;
+
+        document.getElementById("intro").style.display = "none";
+        document.getElementById("game-interface").style.display = "block";
+    }
+
+    function showCountryList() {
+        let output = "<h3>Country List:</h3><ul>";
+        countries.forEach((country, index) => {
+            output += `<li>${index + 1}. ${country.name} - Power: ${country.power}, Economy: ${country.economy}, Stability: ${country.stability}</li>`;
+        });
+        output += "</ul>";
+        document.getElementById("output").innerHTML = output;
+    }
+
+    function viewCountryStats() {
+        const stats = `
+            <h3>Your Country Stats:</h3>
+            <p>Name: ${countryName}</p>
+            <p>Power: ${countryPower}</p>
+            <p>Economy: ${countryEconomy}</p>
+            <p>Stability: ${countryStability}</p>
+        `;
+        document.getElementById("output").innerHTML = stats;
+    }
+
+    function goToWar() {
+        let output = "<h3>Choose a country to attack:</h3><ul>";
+        countries.forEach((country, index) => {
+            output += `<li onclick="attackCountry(${index})">${country.name} - Power: ${country.power}, Economy: ${country.economy}, Stability: ${country.stability}</li>`;
+        });
+        output += "</ul>";
+        document.getElementById("output").innerHTML = output;
+    }
+
+    function attackCountry(index) {
+        const target = countries[index];
+        if (countryPower > target.power) {
+            countryPower += 5;
+            countryEconomy += 5;
+            countryStability -= 5;
+            target.power -= 5;
+            target.economy -= 5;
+            target.stability -= 3;
+            alert(`You won the battle against ${target.name}!`);
+        } else if (countryPower < target.power) {
+            countryPower -= 5;
+            countryEconomy -= 5;
+            countryStability -= 5;
+            target.power += 5;
+            target.economy += 5;
+            target.stability -= 1;
+            alert(`You lost the battle against ${target.name}!`);
+        } else {
+            alert(`It's a draw!`);
+        }
+
+        if (target.power <= 0 || target.economy <= 0 || target.stability <= 0) {
+            countries.splice(index, 1);
+            alert(`${target.name} has collapsed!`);
+        }
+
+        updateStats();
+        checkGameOver();  // Check if the game should end after the battle
+        document.getElementById("output").innerHTML = "";
+    }
+
+    function improveStability() {
+        countryEconomy -= 5;
+        countryStability += 5;
+        updateStats();
+        alert("Your country's stability increased!");
+        checkGameOver();  // Check if the game should end after improving stability
+    }
+
+    function exitGame() {
+        alert("Goodbye!");
+        location.reload();
+    }
+
+    function updateStats() {
+        document.getElementById("country-power").textContent = countryPower;
+        document.getElementById("country-economy").textContent = countryEconomy;
+        document.getElementById("country-stability").textContent = countryStability;
+    }
+
+    function checkGameOver() {
+        if (countryPower <= 0 || countryEconomy <= 0 || countryStability <= 0) {
+            alert(`${countryName} has collapsed! Game Over.`);
+            location.reload();  // Restart the game
+        }
+    }
+</script>
+</body>
+</html>
